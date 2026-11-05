@@ -10,13 +10,13 @@ Tell the agent in your Herdr window:
 
 > Read ~/.config/herdr-app/AGENTS.md, then add this layout: https://github.com/iosif2/herdr-winbox
 
-It copies `layouts/winbox.json` and the four `mods/winbox-*/` folders into `~/.config/herdr-app/`, checks them and switches to the layout. By hand:
+It copies `layouts/winbox.json` and the five `mods/winbox-*/` folders into `~/.config/herdr-app/`, checks them and switches to the layout. By hand:
 
 ```sh
 git clone https://github.com/iosif2/herdr-winbox
 cp herdr-winbox/layouts/winbox.json herdr-winbox/layouts/winbox.png ~/.config/herdr-app/layouts/
 cp -R herdr-winbox/mods/winbox-* ~/.config/herdr-app/mods/
-for m in side top pane status; do herdr-app check ~/.config/herdr-app/mods/winbox-$m; done
+for m in side tabs top pane status; do herdr-app check ~/.config/herdr-app/mods/winbox-$m; done
 herdr-app do layout.switch --name winbox
 ```
 
@@ -30,6 +30,7 @@ Optional keys (`keys.json`): a command named like a panel toggles it, e.g. `"lay
 |---|---|
 | sidebar (left) | spaces as menu items, `›` unfolds a space's tabs; Herdr's agents list (Working / Idle) under them; then New Terminal, New Space, Files, Changes, Agents, Commands, Settings |
 | top bar | Workspace chip (opens the picker), search (command palette), `N working` pill, `N needs you` pill when agents are blocked, update pill when one is ready, `‹ ›` previous/next agent, settings |
+| tabs | the shown space's tabs as flat tabs above the panes: click, double-click to rename, ×, drag to reorder, `+` for a new terminal or agent |
 | windows | each pane framed as a WinBox window: program, folder, status, split/zoom/close on hover |
 | status bar | computer name, `ip / arch / model / OS / herdr-app version`, CPU %, memory used / free / total, uptime, clock |
 
