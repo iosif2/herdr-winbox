@@ -1,6 +1,6 @@
 # herdr-winbox
 
-A layout for the [Herdr](https://herdr.dev) desktop app in the style of MikroTik's WinBox 4: a menu column on the left with your spaces as menu items, a "Workspace:" bar on top with green and blue pills, flat terminal windows in the middle, and a status bar with CPU, memory, uptime and a clock along the bottom.
+A layout for the [Herdr](https://herdr.dev) desktop app in the style of MikroTik's WinBox 4: a menu column on the left with your spaces as menu items and the agents list under them, a "Workspace:" bar on top with green and blue pills, flat terminal windows in the middle, and a status bar with CPU, memory, uptime and a clock along the bottom.
 
 ![WinBox](preview.png)
 
@@ -28,7 +28,7 @@ Optional keys (`keys.json`): a command named like a panel toggles it, e.g. `"lay
 
 | region | what it does |
 |---|---|
-| menu (left) | spaces as menu items, `›` unfolds a space's tabs; then New Terminal, New Space, Files, Changes, Agents, Commands, Settings |
+| sidebar (left) | spaces as menu items, `›` unfolds a space's tabs; Herdr's agents list (Working / Idle) under them; then New Terminal, New Space, Files, Changes, Agents, Commands, Settings |
 | top bar | Workspace chip (opens the picker), search (command palette), `N working` pill, `N needs you` pill when agents are blocked, update pill when one is ready, `‹ ›` previous/next agent, settings |
 | windows | each pane framed as a WinBox window: program, folder, status, split/zoom/close on hover |
 | status bar | computer name, `ip / arch / model / OS / herdr-app version`, CPU %, memory used / free / total, uptime, clock |
