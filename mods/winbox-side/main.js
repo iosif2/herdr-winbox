@@ -16,7 +16,7 @@ export default class Side extends View {
     this.open = new Set(JSON.parse(localStorage.getItem("open") ?? "[]"));
     // Keys open a panel as its menu item does: "cmd-g": "winbox-side.graph" in keys.json toggles
     // the panel child called "graph" (files and changes likewise).
-    if (props()?.role !== "brand") cx.spawn(async (cx) => { for (;;) { togglePanel(await nextCommand()); cx.notify(); } });
+    if (props()?.role === "menu") cx.spawn(async (cx) => { for (;;) { togglePanel(await nextCommand()); cx.notify(); } });
   }
 
   fold(id, cx) {
@@ -54,7 +54,8 @@ export default class Side extends View {
 
   render() {
     const t = theme();
-    if (props()?.role === "brand") return this.brand(t);
+    const role = props()?.role;
+    if (role === "brand") return this.brand(t);
     const ag = agents();
     const rows = [];
     for (const s of spaces()) {
@@ -87,9 +88,13 @@ export default class Side extends View {
       ["commands", "commands", "Commands", () => run("app.palette"), false],
       ["settings", "settings", "Settings", () => run("app.settings"), false],
     ];
+    const tools = fixed.map(([id, glyph, label, click, on]) => this.row(t, id, glyph, label, { on, click }));
+    // role "tools": only the fixed items, for a layout that puts something else (the agents list) between them and the spaces.
+    if (role === "tools") return v_flex().size_full().bg(t.chrome).border_r(1).border_color(t.border).py(4)
+      .child(div().mx(8).mb(4).h(1).flex_none().bg(t.border)).children(tools);
     return v_flex().size_full().bg(t.chrome).border_r(1).border_color(t.border).py(4)
       .child(v_flex().id("winbox-spaces").flex_1().min_h(0).overflow_y_scrollbar().children(rows))
-      .child(div().mx(8).my(4).h(1).flex_none().bg(t.border))
-      .children(fixed.map(([id, glyph, label, click, on]) => this.row(t, id, glyph, label, { on, click })));
+      // props.fixed === false leaves the fixed items to a "tools" copy.
+      .when(props()?.fixed !== false, (el) => el.child(div().mx(8).my(4).h(1).flex_none().bg(t.border)).children(tools));
   }
 }
