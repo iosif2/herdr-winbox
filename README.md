@@ -22,6 +22,8 @@ herdr-app do layout.switch --name winbox
 
 `ctrl-shift-l` cycles back to your other layouts. Delete the files to remove it.
 
+Optional keys (`keys.json`): a command named like a panel toggles it, e.g. `"layout:winbox": { "cmd-e": "winbox-side.files" }`. A layout can add more panel items to the menu with `props.extra` on the `side` block, see [RECIPE.md](RECIPE.md).
+
 ## What's where
 
 | region | what it does |

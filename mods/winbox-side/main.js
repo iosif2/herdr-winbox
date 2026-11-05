@@ -1,18 +1,22 @@
 // The WinBox menu column: the brand row at the top (props.role "brand", beside
 // the window buttons), and under it every space as a menu item with a › that
 // unfolds its tabs, then the fixed items (New Terminal, New Space, Files,
-// Changes, Agents, Commands, Settings). Click a space or a tab to go there,
+// Changes, any extra panels the layout names in props.extra, Agents, Commands,
+// Settings). Click a space or a tab to go there,
 // right-click for Herdr's own menu.
 import { View, div, svg } from "gpui-kit";
 import { v_flex, h_flex } from "gpui-base";
-import { spaces, agents, run, theme, props, openOverlay, window } from "herdr";
+import { spaces, agents, run, theme, props, openOverlay, window, nextCommand } from "herdr";
 import { icon, spaceColor, panelOn, togglePanel, stop } from "./shared.js";
 
 const ROW = 24;
 
 export default class Side extends View {
-  init() {
+  init(_props, cx) {
     this.open = new Set(JSON.parse(localStorage.getItem("open") ?? "[]"));
+    // Keys open a panel as its menu item does: "cmd-g": "winbox-side.graph" in keys.json toggles
+    // the panel child called "graph" (files and changes likewise).
+    if (props()?.role !== "brand") cx.spawn(async (cx) => { for (;;) { togglePanel(await nextCommand()); cx.notify(); } });
   }
 
   fold(id, cx) {
@@ -77,6 +81,8 @@ export default class Side extends View {
       ["new-space", "plus", "New Space", () => run("space.new"), false],
       ["files", "folder", "Files", () => togglePanel("files"), panelOn("files")],
       ["changes", "changes", "Changes", () => togglePanel("changes"), panelOn("changes")],
+      // More panels a layout adds to panel-body: props.extra = [{ id, label, icon }].
+      ...(props()?.extra ?? []).filter((x) => x?.id && x.label).map((x) => [x.id, x.icon ?? "box", x.label, () => togglePanel(x.id), panelOn(x.id)]),
       ["agents", "agents", "Agents", () => run("mod.open", { name: "picker" }), false],
       ["commands", "commands", "Commands", () => run("app.palette"), false],
       ["settings", "settings", "Settings", () => run("app.settings"), false],
