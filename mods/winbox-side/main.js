@@ -59,7 +59,8 @@ export default class Side extends View {
     const ag = agents();
     const rows = [];
     for (const s of spaces()) {
-      const many = s.tabs.length > 1, open = many && this.open.has(s.id);
+      // The shown space's tabs are always unfolded; the others fold and unfold by their chevron.
+      const many = s.tabs.length > 1, open = many && (s.active || this.open.has(s.id));
       rows.push(this.row(t, `sp-${s.id}`, "box", s.name, {
         on: s.active && !open, color: spaceColor(t, s),
         chevron: many ? (open ? "chevron-down" : "chevron-right") : null, onChevron: (cx) => this.fold(s.id, cx),

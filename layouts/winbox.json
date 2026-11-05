@@ -125,73 +125,93 @@
         },
         {
           "id": "work",
-          "type": "row",
-          "padding": 8,
-          "gap": 8,
+          "type": "column",
+          "padding": [
+            6,
+            8
+          ],
           "children": [
             {
-              "id": "main",
+              "id": "tabs",
               "type": "block",
+              "size": {
+                "px": 30
+              },
               "content": {
-                "tab": "active",
-                "pane": {
-                  "header": {
-                    "content": {
-                      "mod": "winbox-pane"
-                    },
-                    "height": 26,
-                    "position": "top",
-                    "reveal": "always"
-                  },
-                  "background": "background",
-                  "border": {
-                    "width": 1,
-                    "color": "border"
-                  },
-                  "focus": {
-                    "width": 1,
-                    "color": "accent"
-                  },
-                  "radius": 4,
-                  "gap": 8,
-                  "lone": true
-                }
+                "mod": "winbox-tabs"
               }
             },
             {
-              "id": "panel",
-              "type": "column",
-              "size": {
-                "px": 360
-              },
-              "min": 280,
-              "max": 900,
-              "hidden": true,
+              "id": "work-body",
+              "type": "row",
+              "gap": 8,
               "children": [
                 {
-                  "id": "panel-body",
-                  "type": "stack",
-                  "active": "files",
+                  "id": "main",
+                  "type": "block",
+                  "content": {
+                    "tab": "active",
+                    "pane": {
+                      "header": {
+                        "content": {
+                          "mod": "winbox-pane"
+                        },
+                        "height": 26,
+                        "position": "top",
+                        "reveal": "always"
+                      },
+                      "background": "background",
+                      "border": {
+                        "width": 1,
+                        "color": "border"
+                      },
+                      "focus": {
+                        "width": 1,
+                        "color": "accent"
+                      },
+                      "radius": 4,
+                      "gap": 8,
+                      "lone": true
+                    }
+                  }
+                },
+                {
+                  "id": "panel",
+                  "type": "column",
+                  "size": {
+                    "px": 360
+                  },
+                  "min": 280,
+                  "max": 900,
+                  "hidden": true,
                   "children": [
                     {
-                      "id": "files",
-                      "type": "block",
-                      "content": {
-                        "mod": "files"
-                      }
-                    },
-                    {
-                      "id": "changes",
-                      "type": "block",
-                      "content": {
-                        "mod": "changes"
-                      }
+                      "id": "panel-body",
+                      "type": "stack",
+                      "active": "files",
+                      "children": [
+                        {
+                          "id": "files",
+                          "type": "block",
+                          "content": {
+                            "mod": "files"
+                          }
+                        },
+                        {
+                          "id": "changes",
+                          "type": "block",
+                          "content": {
+                            "mod": "changes"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
               ]
             }
-          ]
+          ],
+          "gap": 6
         }
       ]
     },
