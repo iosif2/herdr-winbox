@@ -28,13 +28,13 @@ Optional keys (`keys.json`): a command named like a panel toggles it, e.g. `"lay
 
 | region | what it does |
 |---|---|
-| sidebar (left) | spaces as menu items, `›` unfolds a space's tabs; Herdr's agents list (Working / Idle) under them; then New Terminal, New Space, Files, Changes, Agents, Commands, Settings |
+| sidebar (left) | spaces as menu items, `›` unfolds a space's tabs, grouped under a header per machine once another machine is added (`+` starts a space there, a click folds it), then Add Machine; Herdr's agents list (Working / Idle) under them; then New Terminal, New Space, Files, Changes, Agents, Commands, Settings |
 | top bar | Workspace chip (opens the picker), search (command palette), `N working` pill, `N needs you` pill when agents are blocked, update pill when one is ready, `‹ ›` previous/next agent, settings |
 | tabs | the shown space's tabs as flat tabs above the panes: click, double-click to rename, ×, drag to reorder, `+` for a new terminal or agent |
 | windows | each pane framed as a WinBox window: program, folder, status, split/zoom/close on hover |
-| status bar | computer name, `ip / arch / model / OS / herdr-app version`, CPU %, memory used / free / total, uptime, clock |
+| status bar | the shown space's machine: its name, `ip / arch / model / OS / herdr-app version`, CPU %, memory used / free / total, uptime, clock |
 
-The status bar runs one small shell script every 5 seconds on this computer (`sysctl`, `vm_stat`, `ps`, `scutil`, `ipconfig` on macOS; `/proc` on Linux). Nothing reaches the network. The full brief another agent can rebuild it from is in [RECIPE.md](RECIPE.md).
+The status bar runs one small shell script every 5 seconds on the machine the shown space is on (`sysctl`, `vm_stat`, `ps`, `scutil`, `ipconfig` on macOS; `/proc` on Linux): this computer, or another machine through herdr-core. Nothing else reaches the network. The full brief another agent can rebuild it from is in [RECIPE.md](RECIPE.md).
 
 ## License
 

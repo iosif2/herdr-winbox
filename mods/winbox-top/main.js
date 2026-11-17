@@ -1,5 +1,5 @@
 // The bar across the top, as WinBox's: "Workspace:" and the shown space as a
-// drop-down chip (opens Herdr's picker), a search button (the command palette),
+// drop-down chip (opens Herdr's picker; a space on another machine shows "machine · name"), a search button (the command palette),
 // then on the right the pills (agents working in green, a ready update in blue,
 // agents that need you in red), ‹ › between agents, and the settings gear.
 import { View, div, svg } from "gpui-kit";
@@ -25,7 +25,7 @@ export default class Top extends View {
       .child(div().flex_none().text_color(t.muted).child("Workspace:"))
       .child(h_flex().id("workspace").h(22).w(150).pl(8).pr(5).gap(6).items_center().rounded(4).bg(t.raised).border_1().border_color(t.input).cursor_pointer()
         .hover((s) => s.bg(t.hover)).on_mouse_down("left", stop).on_click(() => run("mod.open", { name: "picker" }))
-        .child(div().flex_1().min_w(0).truncate().text_color(t.foreground).child(space?.name ?? "<none>"))
+        .child(div().flex_1().min_w(0).truncate().text_color(t.foreground).child(space ? (space.machine ? `${space.machine} · ${space.name}` : space.name) : "<none>"))
         .child(svg(icon("chevron-down")).size(12).flex_none().text_color(t.dim)))
       .child(this.button(t, "search", "search", "Commands", () => run("app.palette")))
       .child(div().flex_1())

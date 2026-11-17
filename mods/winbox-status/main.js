@@ -1,10 +1,12 @@
-// The status bar along the bottom, as WinBox's: this computer's name, then
+// The status bar along the bottom, as WinBox's: the name of the machine the shown
+// space is on (this computer, or another one from `hc machine ls`), then
 // "ip / arch / model / OS / herdr-app version", CPU %, memory (used / free /
 // total; used is active + wired + compressed, as Activity Monitor counts it), uptime and a clock with seconds. The facts come from one shell
-// script every 5 s; the clock and uptime tick every second without it.
+// script every 5 s, run on that machine; the clock and uptime tick every second
+// without it. herdr-app's version is shown for this computer only.
 import { View, div, svg } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { exec, theme, updates } from "herdr";
+import { exec, spaces, theme, updates } from "herdr";
 import { icon } from "./shared.js";
 
 const SCRIPT = String.raw`
@@ -45,17 +47,34 @@ function clock() {
 export default class Status extends View {
   init(_props, cx) {
     this.facts = {};
+    this.on = this.machine();
+    this.away = false; // the machine didn't answer
     this.read(cx);
     cx.timer.every(5000, (cx) => this.read(cx));
-    cx.timer.every(1000, (cx) => cx.notify());
+    // A switch to a space on another machine reads that one right away.
+    cx.timer.every(1000, (cx) => {
+      const m = this.machine();
+      if (m !== this.on) { this.on = m; this.facts = {}; this.away = false; this.read(cx); }
+      cx.notify();
+    });
   }
 
+  machine() { return spaces().find((s) => s.active)?.machine ?? null; }
+
   read(cx) {
+    const on = this.on;
+    if (this.busy) return;
+    this.busy = true;
     cx.spawn(async (cx) => {
       try {
-        const r = await exec("sh", ["-c", SCRIPT]);
-        if (r.code === 0) this.facts = Object.fromEntries(r.stdout.split("\n").filter((l) => l.includes("=")).map((l) => l.split(/=(.*)/s).slice(0, 2)));
-      } catch {}
+        const r = await exec("sh", ["-c", SCRIPT], on ? { on, timeout: 4000 } : {});
+        if (on === this.on && r.code === 0) {
+          this.facts = Object.fromEntries(r.stdout.split("\n").filter((l) => l.includes("=")).map((l) => l.split(/=(.*)/s).slice(0, 2)));
+          this.away = false;
+        }
+      } catch { if (on === this.on) this.away = true; }
+      this.busy = false;
+      if (on !== this.on) this.read(cx); // switched machines while it ran
       cx.notify();
     });
   }
@@ -65,11 +84,11 @@ export default class Status extends View {
     const item = (glyph, text, strong = false) => h_flex().flex_none().gap(5).items_center()
       .child(svg(icon(glyph)).size(13).flex_none().text_color(t.muted))
       .child(div().truncate().when(strong, (el) => el.font_semibold().text_color(t.foreground)).child(text));
-    const about = [f.ip, f.arch, f.model, f.ver, `herdr-app ${updates().app.version}`].filter(Boolean).join(" / ");
+    const about = this.away ? `${this.on} isn't answering` : [f.ip, f.arch, f.model, f.ver, this.on ? null : `herdr-app ${updates().app.version}`].filter(Boolean).join(" / ");
     const cpu = f.cpu && f.ncpu ? `${Math.min(100, Math.round(Number(f.cpu) / Number(f.ncpu)))} %` : "…";
     const mem = f.total && f.free ? `${mib(Number(f.total) - Number(f.free))} / ${mib(f.free)} / ${mib(f.total)}` : "…";
     return h_flex().size_full().px(10).gap(14).items_center().bg(t.chrome).border_t(1).border_color(t.border).text_size(11.5).text_color(t.muted)
-      .child(h_flex().gap(6).items_center().min_w(0).child(item("host", f.name ?? "…", true)).child(div().truncate().child(about)))
+      .child(h_flex().gap(6).items_center().min_w(0).child(item(this.on ? "machine" : "host", this.on && f.name ? `${this.on} (${f.name})` : (f.name ?? this.on ?? "…"), true)).child(div().truncate().child(about)))
       .child(item("cpu", cpu))
       .child(item("memory", mem))
       .child(item("uptime", uptime(f.boot)))
